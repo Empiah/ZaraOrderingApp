@@ -1,25 +1,33 @@
-
-from selenium import webdriver
+import bs4 
+from selenium import webdriver 
+import requests
+import json
 import re
 
-driver = webdriver.Chrome(executable_path='/Users/ophipps/Documents/Apps/chromedriver')
-driver.maximize_window()
-url_home = 'https://www.zara.com/uk/'
-url_booking = 'https://www.zara.com/uk/en/knotted-wrap-skirt-p02975878.html?v1=47358279&v2=1445670'
+res = requests.get('https://www.zara.com/uk/en/knotted-wrap-skirt-p02975878.html?v1=47358279&v2=1445670', 
+headers={'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'})
 
-driver.get(url_home)
+zara = bs4.BeautifulSoup(res.text,'lxml')
 
 
-"""
-import time
-from selenium import webdriver
+#OutOfStock = zara.find_all('label', attrs={'class':"product-size _product-size disabled _disabled"})
+print('---------------','\nOut of Stock','\n---------------')
 
-driver = webdriver.Chrome(executable_path='/Users/ophipps/Documents/Apps/chromedriver')
-driver.get('http://www.google.com/');
-time.sleep(5) # Let the user actually see something!
-search_box = driver.find_element_by_name('q')
-search_box.send_keys('ChromeDriver')
-search_box.submit()
-time.sleep(5) # Let the user actually see something!
-driver.quit()
-"""
+for OutOfStock in zara.find_all('label', attrs={'class':"product-size _product-size disabled _disabled"}):
+    print(OutOfStock.text)
+
+print('---------------','\nBack Soon','\n---------------')
+
+for BackSoon in zara.find_all('label', attrs={'class':"product-size _product-size back-soon _back-soon _disabled"}):
+    print(BackSoon.text[0])
+
+print('---------------','\nIn Stock','\n---------------')
+
+for InStock in zara.find_all('label', attrs={'class':"product-size _product-size"}):
+    print(InStock.text)
+
+
+
+
+
+
