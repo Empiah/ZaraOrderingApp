@@ -18,12 +18,12 @@ OutOfStock = []
 for NoStock in zara.find_all('label', attrs={'class':"product-size _product-size disabled _disabled"}):
     OutOfStock.append(str(NoStock.text))
 
-#Looking for out of stock sizes
+#Looking for sizes labelled as back soon
 BackSoon = []
 for SoonStock in zara.find_all('label', attrs={'class':"product-size _product-size back-soon _back-soon _disabled"}):
     BackSoon.append(str(SoonStock.text[0]))
 
-#Looking for out of stock sizes
+#Looking for what is in stock
 InStock = []
 for Stock in zara.find_all('label', attrs={'class':"product-size _product-size"}):
     InStock.append(str(Stock.text))
