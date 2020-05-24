@@ -1,8 +1,3 @@
-#TODO
-#loop every x amount of time to check
-#only send email when status changes for XS or S size
-
-
 import bs4
 import requests
 import pandas as pd
