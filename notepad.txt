@@ -4,3 +4,12 @@
 #print(BackSoon)
 #print('---------------','\nIn Stock','\n---------------')
 #print(InStock)
+
+
+    email_text = """\
+    From: 
+    To: %s
+    Subject: %s
+
+    %s
+    """ % (sent_from, to, subject, body)
