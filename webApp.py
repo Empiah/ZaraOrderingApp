@@ -42,23 +42,20 @@ def email_credentials():
 
     gmail_user = email_address.strip()
     gmail_password = email_pw.strip()
-    gmail_to= email_to.strip()
+    gmail_to = email_to.strip()
 
     return gmail_user, gmail_password, gmail_to 
 
 
-def send_email(gmail_user, gmail_password, gmail_to, OutOfStock, BackSoon, InStock, link):
+def send_email(gmail_user, gmail_password, gmail_to, subject, OutOfStock, BackSoon, InStock, link):
 
     ###SENDING EMAIL
-    sent_from = gmail_user
-    to = gmail_to
-    subject = 'ZARA CLOTHES STATUS'
     body = 'InStock: ' + str(InStock) +  '<br>' + 'BackSoon: ' + str(BackSoon) +  '<br>' + 'OutofStock: ' + str(OutOfStock) + '<br>' + str(link)
     
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
-    msg['From'] = sent_from
-    msg['To'] = to
+    msg['From'] = gmail_user
+    msg['To'] = gmail_to
     msg.attach(MIMEText(str(body), 'html'))
     #msg.attach(MIMEText(str(link), 'html'))
 
@@ -66,7 +63,7 @@ def send_email(gmail_user, gmail_password, gmail_to, OutOfStock, BackSoon, InSto
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(gmail_user, gmail_password)
-        server.sendmail(sent_from, to, msg.as_string())
+        server.sendmail(gmail_user, gmail_to, msg.as_string())
         server.close()
 
         print('Email sent!')
@@ -86,20 +83,30 @@ def checking_stock():
     OutOfStock, BackSoon, InStock = webscrape(zara)
     df = dataframe(OutOfStock, BackSoon, InStock)
 
+    OutOfStock = [item.replace(' ', '') for item in OutOfStock]
+    BackSoon = [item.replace(' ', '') for item in BackSoon]
+    InStock = [item.replace(' ', '') for item in InStock]
+
     return OutOfStock, BackSoon, InStock, df, link
 
 
 def main():
 
-    
     OutOfStock, BackSoon, InStock, df, link = checking_stock()
-    print(OutOfStock, BackSoon, InStock)
-    while 'XS ' in OutOfStock:
+    BackSoonSent = ''
+    while 'XS' in OutOfStock:
         print(df)
         print(datetime.datetime.now())
-        if 'XS ' in InStock:
+        if 'XS' in BackSoon and 'True' not in BackSoonSent:
             gmail_user, gmail_password, gmail_to = email_credentials()
-            send_email(gmail_user, gmail_password, gmail_to, OutOfStock, BackSoon, InStock, link)
+            subject = 'ZARA CLOTHES STATUS - BACK SOON'
+            BackSoonSent = ['True']
+            send_email(gmail_user, gmail_password, gmail_to, subject, OutOfStock, BackSoon, InStock, link)
+            continue
+        elif 'XS' in InStock:
+            gmail_user, gmail_password, gmail_to = email_credentials()
+            subject = 'ZARA CLOTHES STATUS - IN STOCK'
+            send_email(gmail_user, gmail_password, gmail_to, subject, OutOfStock, BackSoon, InStock, link)
             break
         else:
             time.sleep(5)
