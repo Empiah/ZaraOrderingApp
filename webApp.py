@@ -17,7 +17,7 @@ def webscrape(zara):
     #Looking for sizes labelled as back soon
     BackSoon = []
     for SoonStock in zara.find_all('label', attrs={'class':"product-size _product-size back-soon _back-soon _disabled"}):
-        BackSoon.append(str(SoonStock.text[0]))
+        BackSoon.append(str(SoonStock.text[:2]))
 
     #Looking for what is in stock
     InStock = []
@@ -94,7 +94,8 @@ def main():
 
     OutOfStock, BackSoon, InStock, df, link = checking_stock()
     BackSoonSent = ''
-    while 'XS' in OutOfStock:
+    InStockSent = ''
+    while 'XS' in OutOfStock or 'XS' in BackSoon or 'XS' in InStock:
         print(df)
         print(datetime.datetime.now())
         if 'XS' in BackSoon and 'True' not in BackSoonSent:
@@ -103,10 +104,13 @@ def main():
             BackSoonSent = ['True']
             send_email(gmail_user, gmail_password, gmail_to, subject, OutOfStock, BackSoon, InStock, link)
             continue
-        elif 'XS' in InStock:
+        elif 'XS' in InStock and 'True' not in InStockSent:
             gmail_user, gmail_password, gmail_to = email_credentials()
             subject = 'ZARA CLOTHES STATUS - IN STOCK'
+            InStockSent = ['True']
             send_email(gmail_user, gmail_password, gmail_to, subject, OutOfStock, BackSoon, InStock, link)
+            break
+        elif 'XS' in InStock and 'True' in InStockSent:
             break
         else:
             time.sleep(5)
