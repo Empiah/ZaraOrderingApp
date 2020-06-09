@@ -38,7 +38,9 @@ def email_credentials():
     email_info = pd.read_csv('/Users/ophipps/Documents/Apps/OPPythonbot.csv')
     email_address = email_info['info'][0]
     email_pw = email_info['info'][1]
-    email_to = email_info['info'][2]
+    #email_to = email_info['info'][2]
+    #for testing
+    email_to = email_info['info'][0]
 
     gmail_user = email_address.strip()
     gmail_password = email_pw.strip()
@@ -71,9 +73,7 @@ def send_email(gmail_user, gmail_password, gmail_to, subject, OutOfStock, BackSo
         print ('Something went wrong...')
 
 
-def checking_stock():
-
-    link = 'https://www.zara.com/uk/en/knotted-wrap-skirt-p02975878.html?v1=47358279&v2=1445670'
+def checking_stock(link):
 
     res = requests.get(link, 
     headers={'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'})
@@ -87,12 +87,14 @@ def checking_stock():
     BackSoon = [item.replace(' ', '') for item in BackSoon]
     InStock = [item.replace(' ', '') for item in InStock]
 
-    return OutOfStock, BackSoon, InStock, df, link
+    return OutOfStock, BackSoon, InStock, df
 
 
 def main():
 
-    OutOfStock, BackSoon, InStock, df, link = checking_stock()
+    link = 'https://www.zara.com/uk/en/knotted-wrap-skirt-p02975878.html?v1=47358279&v2=1445670'
+
+    OutOfStock, BackSoon, InStock, df = checking_stock(link)
     BackSoonSent = ''
     InStockSent = ''
     while 'XS' in OutOfStock or 'XS' in BackSoon or 'XS' in InStock:
@@ -114,8 +116,9 @@ def main():
             break
         else:
             time.sleep(5)
-            OutOfStock, BackSoon, InStock, df, link = checking_stock()
+            OutOfStock, BackSoon, InStock, df = checking_stock(link)
             continue
+
 
 
 if __name__ == '__main__':
