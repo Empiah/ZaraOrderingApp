@@ -38,9 +38,9 @@ def email_credentials():
     email_info = pd.read_csv('/Users/ophipps/Documents/Apps/OPPythonbot.csv')
     email_address = email_info['info'][0]
     email_pw = email_info['info'][1]
-    #email_to = email_info['info'][2]
+    email_to = email_info['info'][2]
     #for testing
-    email_to = email_info['info'][0]
+    #email_to = email_info['info'][0]
 
     gmail_user = email_address.strip()
     gmail_password = email_pw.strip()
